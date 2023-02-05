@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "./canisters/oracle",
+    "./canisters/oracles_manager"
+]

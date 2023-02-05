@@ -1,0 +1,32 @@
+{
+    "version": 1,
+    "dfx": "0.12.1",
+    "canisters": {
+      "oracle": {
+        "build": "node build.js oracle",
+        "type": "custom",
+        "package": "oracle",
+        "candid": "candid/oracle.did",
+        "wasm": "target/wasm32-unknown-unknown/release/oracle-opt.wasm"
+      },
+      "oracles_manager": {
+        "build": "node build.js oracles_manager",
+        "type": "custom",
+        "package": "oracles_manager",
+        "candid": "candid/oracles_manager.did",
+        "wasm": "target/wasm32-unknown-unknown/release/oracles_manager-opt.wasm"
+      }
+    },
+    "defaults": {
+      "build": {
+        "packtool": "",
+        "args": ""
+      }
+    },
+    "networks": {
+      "local": {
+        "bind": "127.0.0.1:4000",
+        "type": "ephemeral"
+      }
+    }
+  }
