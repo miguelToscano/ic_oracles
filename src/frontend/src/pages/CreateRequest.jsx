@@ -27,46 +27,12 @@ const CreateRequest = (props) => {
   const [jsonData, setJsonData] = useState(null);
   const [headers, setHeaders] = useState([{ key: "", value: "" }]);
   const [sentRequest, setSentRequest] = useState(false);
-  const [responseHeaders, setResponseHeaders] = useState([]);
-  const [headersToKeep, setHeadersToKeep] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [redirectToDashboard, setRedirectToDashboard] = useState(false);
 
   const onSendRequestClick = async () => {
     const makeRequests = async () => {
-      // const firstRequest = axios({
-      //   method,
-      //   url,
-      //   headers,
-      //   data: {
-      //     ...jsonData
-      //   }
-      // });
-
-      // const secondRequest = axios({
-      //   method,
-      //   url,
-      //   headers,
-      //   data: {
-      //     ...jsonData
-      //   }
-      // });
-
-      // const [firstResponse, secondResponse]= await Promise.all([firstRequest, secondRequest]);
-
-      // Keep the headers that are in both responses and have the same value and store them in headersToKeep
-      // const firstResponseHeaders = Object.keys(firstResponse.headers);
-      // const secondResponseHeaders = Object.keys(secondResponse.headers);
-
-      // const headersToKeep = firstResponseHeaders.filter((header) => {
-      //   return secondResponseHeaders.includes(header) && firstResponse.headers[header] === secondResponse.headers[header];
-      // });
-
-      // console.log(headersToKeep)
-
       setSentRequest(true);
-      // setResponseHeaders(Object.keys(firstResponse.headers));
-      // setHeadersToKeep(headersToKeep);
       setIsLoading(true);
       
       try {
@@ -75,7 +41,6 @@ const CreateRequest = (props) => {
           method,
           headers: headers.filter(header => header.key != '').map(header => header.key),
           owner: props.principalId
-          // body: jsonData
         });
       } catch (error) {
         setIsLoading(false);
@@ -132,15 +97,6 @@ const CreateRequest = (props) => {
         </RadioGroup>
         <FormHelperText>Select the request method</FormHelperText>
       </FormControl>
-
-      {/* {method === "POST" && (
-        <FormControl id="jsonData" mt={4} isRequired>
-          <FormLabel>JSON Data</FormLabel>
-          <Textarea value={jsonData} onChange={(e) => setJsonData(e.target.value)} />
-          <FormHelperText>Enter the JSON data to send in the request body</FormHelperText>
-        </FormControl>
-      )} */}
-
       <FormControl id="headers" mt={4}>
         <FormLabel>Headers</FormLabel>
         {headers.map((header, i) => (
@@ -150,11 +106,6 @@ const CreateRequest = (props) => {
               value={header.key}
               onChange={(e) => handleHeaderChange(i, "key", e.target.value)}
             />
-            {/* <Input
-              placeholder="Value"
-              value={header.value}
-              onChange={(e) => handleHeaderChange(i, "value", e.target.value)}
-            /> */}
             <Button onClick={() => handleRemoveHeader(i)}>Remove</Button>
           </HStack>
         ))}

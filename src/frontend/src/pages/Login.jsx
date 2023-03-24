@@ -6,8 +6,8 @@ import { Card, CardHeader, CardBody, CardFooter, Text, Stack, Divider, ButtonGro
 import { Navigate } from "react-router-dom";
 import { oracleIdlFactory } from '../services/index';
 
-// const ORACLE_CANISTER_ID = "mclie-4aaaa-aaaah-ace6a-cai";
-const ORACLE_CANISTER_ID = "r7inp-6aaaa-aaaaa-aaabq-cai";
+const ORACLE_CANISTER_ID = "mclie-4aaaa-aaaah-ace6a-cai";
+// const ORACLE_CANISTER_ID = "r7inp-6aaaa-aaaaa-aaabq-cai";
 
 function Login(props) {
   const onButtonCLick = () => {
@@ -20,8 +20,8 @@ function Login(props) {
       })
 
       await client.login({
-          identityProvider: "http://ryjl3-tyaaa-aaaaa-aaaba-cai.localhost:4000/#authorize",
-          // identityProvider: "https://identity.ic0.app/#authorize",
+          // identityProvider: "http://ryjl3-tyaaa-aaaaa-aaaba-cai.localhost:4000/#authorize",
+          identityProvider: "https://identity.ic0.app/#authorize",
           onSuccess: () => {
               props.setIsAuthenticated(true);
               console.log('login successful')
@@ -32,8 +32,8 @@ function Login(props) {
       const principalId = identity.getPrincipal().toText();
       const actor = await Actor.createActor(oracleIdlFactory, {
         agent: new HttpAgent({
-          host: "http://localhost:4000",
-          // host: "https://ic0.app",
+          // host: "http://localhost:4000",
+          host: "https://ic0.app",
           identity
         }),
         canisterId: ORACLE_CANISTER_ID,
