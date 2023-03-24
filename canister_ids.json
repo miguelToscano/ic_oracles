@@ -1,4 +1,8 @@
 {
-  "oracle": {},
-  "oracles_manager": {}
+  "frontend": {
+    "ic": "76vbr-lqaaa-aaaah-aclwa-cai"
+  },
+  "oracle": {
+    "ic": "mclie-4aaaa-aaaah-ace6a-cai"
+  }
 }

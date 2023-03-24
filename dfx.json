@@ -9,12 +9,26 @@
         "candid": "candid/oracle.did",
         "wasm": "target/wasm32-unknown-unknown/release/oracle-opt.wasm"
       },
-      "oracles_manager": {
-        "build": "node build.js oracles_manager",
+      "frontend": {
+        "frontend": {
+          "entrypoint": "src/frontend/src/index.html"
+        },
+        "source": [
+          "src/frontend/assets",
+          "dist/frontend"
+        ],
+        "type": "assets"
+      },
+      "internet_identity": {
         "type": "custom",
-        "package": "oracles_manager",
-        "candid": "candid/oracles_manager.did",
-        "wasm": "target/wasm32-unknown-unknown/release/oracles_manager-opt.wasm"
+        "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
+        "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm",
+        "remote": {
+          "id": {
+            "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai"
+          }
+        },
+        "frontend": {}
       }
     },
     "defaults": {
