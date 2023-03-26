@@ -1,5 +1,4 @@
 use candid::{CandidType, Deserialize, Principal};
-use ic_cdk::api::management_canister::http_request::HttpHeader;
 use serde::Serialize;
 use json;
 
@@ -78,25 +77,3 @@ impl Request {
         format!("{{ \"url\": \"{}\", \"method\": \"{}\", \"headers\": {}, \"data\": {} }}", self.url, self.method, headers, body)
     }
 }
-
-// pub fn get_body(request: Request, input: MakeRequestInput) -> String {
-//     let mut body = request.to_body();
-//     let mut headers = String::from("\"headers\": [");
-//     let mut headers_kept = String::from("\"headers_kept\": [");
-
-//     for header in input.headers {
-//         headers.push_str(&format!("{{ \"name\": \"{}\", \"value\": \"{}\" }},", header.name, header.value));
-//     }
-
-//     for header in request.headers_kept {
-//         headers_kept.push_str(&format!("\"{}\",", header));
-//     }
-
-//     headers.push_str("],");
-//     headers_kept.push_str("],");
-
-//     body = body.replace("\"headers\": [],", &headers);
-//     body = body.replace("\"headers_kept\": [],", &headers_kept);
-
-//     body
-// }

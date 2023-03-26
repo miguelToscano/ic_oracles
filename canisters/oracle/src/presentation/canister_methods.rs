@@ -12,7 +12,7 @@ use std::str;
 use uuid::Uuid;
 use serde::Deserialize;
 
-use crate::domain::requests::{CreateRequestInput, MakeRequestInput, Request, self};
+use crate::domain::requests::{CreateRequestInput, MakeRequestInput, Request};
 use crate::errors::ApiError;
 use crate::infrastructure::requests::Requests;
 
@@ -40,7 +40,7 @@ pub async fn create_uid() -> Result<String, ApiError> {
 #[candid_method(update)]
 pub async fn create_request(input: CreateRequestInput) -> Result<String, ApiError> {
     let id = create_uid().await?;
-    // let caller = ic::caller();
+
     ic::print(format!("{:?}", input.clone()));
 
     let new_request = Request {
@@ -50,9 +50,9 @@ pub async fn create_request(input: CreateRequestInput) -> Result<String, ApiErro
         method: input.method,
         owner: Principal::from_text(input.owner).unwrap(),
     };
-
+    
     ic::with_mut(|requests_repository: &mut Requests| {
-        requests_repository.create(&new_request);
+        requests_repository.create(&new_request).map_err(|_| ApiError::InternalError)
     });
 
     Ok(new_request.id)
@@ -93,7 +93,6 @@ pub fn post_upgrade() {
 #[candid_method(update)]
 pub async fn make_request(input: MakeRequestInput) -> Result<String, ApiError> {
     let available_cycles = ic::msg_cycles_available();
-    // ic::print(format!("Cycles availabe: {}", available_cycles));
 
     if available_cycles < MAKE_REQUEST_FEE {
         return Err(ApiError::InsufficientCyclesReceived(format!(
@@ -102,8 +101,7 @@ pub async fn make_request(input: MakeRequestInput) -> Result<String, ApiError> {
         )));
     }
 
-    let accepted_cycles = ic::msg_cycles_accept(MAKE_REQUEST_FEE);
-    // ic::print(format!("Cycles accepted: {}", accepted_cycles));
+    ic::msg_cycles_accept(MAKE_REQUEST_FEE);
 
     ic::print(format!("{:?}", input));
     let request = ic::with_mut(|requests_repository: &mut Requests| {
@@ -115,14 +113,11 @@ pub async fn make_request(input: MakeRequestInput) -> Result<String, ApiError> {
     }
 
     let request = request.unwrap();
-    
-    // ic::print(format!("{:?}", request.clone().to_body(input.clone())));
 
     let request = CanisterHttpRequestArgument {
         url: "https://us-central1-courier-api-proxy.cloudfunctions.net/proxyRequest".to_string(),
         method: HttpMethod::POST,
         body: Some(request.to_body(input).into_bytes()),
-        // body: Some(get_body(request.clone(), input.clone()).into_bytes()),
         max_response_bytes: None,
         transform: Some(TransformContext::new(transform_send_email, vec![])),
         headers: vec![HttpHeader {
@@ -151,7 +146,6 @@ pub async fn make_request(input: MakeRequestInput) -> Result<String, ApiError> {
             };
 
             let stringified_response = json::stringify(String::from_utf8(response.clone().body).unwrap());
-            // ic::print(stringified_response.clone());
             
             return Ok(stringified_response);
         }
@@ -189,125 +183,6 @@ pub fn get_request(id: String) -> Result<Request, ApiError> {
 
     Ok(request.unwrap())
 }
-
-// #[update]
-// #[candid_method(update)]
-// pub async fn make_request(input: MakeRequestInput) -> Result<String, ()> {
-//     let request = ic::with_mut(| requests_repository: &mut Requests | {
-//         requests_repository.get(input.clone().id)
-//     });
-
-//     if request.is_none() {
-//         return Err(());
-//     }
-
-//     let request = request.unwrap();
-
-//     let mut headers: Vec<HttpHeader> = vec![];
-
-//     for header in input.headers.clone() {
-//         headers.push(HttpHeader {
-//             name: header.name,
-//             value: header.value,
-//         });
-//     }
-
-//     let request = CanisterHttpRequestArgument {
-//         url: request.url,
-//         method: match request.method {
-//             crate::domain::requests::Method::GET => HttpMethod::GET,
-//             crate::domain::requests::Method::POST => HttpMethod::POST,
-//         },
-//         headers: headers,
-//         max_response_bytes: None,
-//         transform: None,
-//         body: None,
-//     };
-
-//     match http_request(request).await {
-//         Ok((_response,)) => {
-//             ic::print(format!("{:?}", _response.headers));
-//             Ok(format!("{:?}", json::stringify(String::from_utf8(_response.body).unwrap())))
-//         },
-//         Err((_r, _m)) => Err(()),
-//     }
-// }
-
-// #[update]
-// #[candid_method(update)]
-// pub async fn make_request() -> Result<String, ()> {
-//     // let request = Request::new(
-//     //     Uuid::new_v4().to_string(),
-//     //     String::from("https://www.google.com"),
-//     //     String::from(""),
-//     //     String::from(""),
-//     //     Method::GET,
-//     // );
-
-//     let request = CanisterHttpRequestArgument {
-//         url: String::from("https://cat-fact.herokuapp.com/facts"),
-//         method: HttpMethod::GET,
-//         headers: vec![],
-//         max_response_bytes: None,
-//         transform: Some(TransformContext::new(transform_request, vec![])),
-//         body: None,
-//     };
-
-//     match http_request(request).await {
-//         Ok((_response,)) => {
-//             ic::print(format!("{:?}", _response.headers));
-//             Ok(format!("{:?}", json::stringify(String::from_utf8(_response.body).unwrap())))
-//         },
-//         Err((_r, _m)) => Err(()),
-//     }
-// }
-
-// #[ic_cdk_macros::query]
-// pub fn transform_request(raw: TransformArgs) -> HttpResponse {
-//     let mut sanitized = raw.response;
-//     sanitized.headers = vec![];
-//     sanitized.headers.push(HttpHeader {
-//         name: String::from("Date"),
-//         value: String::from("Test date value"),
-//     });
-//     sanitized
-// }
-
-// #[derive(CandidType, Deserialize, Clone)]
-// pub struct StableStorage {
-//     api_keys: Vec<(Principal, ApiKey)>,
-//     topics: Vec<(Principal, Vec<Topic>)>,
-// }
-
-// #[pre_upgrade]
-// pub fn pre_upgrade() {
-//     let api_keys = ic::with_mut(|api_keys_repository: &mut ApiKeys| api_keys_repository.archive());
-//     let topics = ic::with_mut(|topics_repository: &mut Topics| topics_repository.archive());
-
-//     let stable_storage = StableStorage { api_keys, topics };
-
-//     match ic::stable_store((stable_storage,)) {
-//         Ok(_) => (),
-//         Err(candid_err) => {
-//             ic::trap(&format!(
-//                 "An error occurred when saving to stable memory (pre_upgrade): {:?}",
-//                 candid_err
-//             ));
-//         }
-//     };
-// }
-
-// #[post_upgrade]
-// pub fn post_upgrade() {
-//     if let Ok((stable_storage,)) = ic::stable_restore::<(StableStorage,)>() {
-//         ic::with_mut(|topics_repository: &mut Topics| {
-//             topics_repository.load(stable_storage.clone().topics)
-//         });
-//         ic::with_mut(|api_keys_repository: &mut ApiKeys| {
-//             api_keys_repository.load(stable_storage.api_keys)
-//         });
-//     }
-// }
 
 #[query(name = "__get_candid_interface_tmp_hack")]
 fn export_candid() -> String {
