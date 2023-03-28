@@ -184,6 +184,12 @@ pub fn get_request(id: String) -> Result<Request, ApiError> {
     Ok(request.unwrap())
 }
 
+#[query]
+#[candid_method(query)]
+pub fn cycles() -> u64 {
+    ic::balance()
+}
+
 #[query(name = "__get_candid_interface_tmp_hack")]
 fn export_candid() -> String {
     export_service!();

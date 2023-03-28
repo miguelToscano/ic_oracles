@@ -61,9 +61,9 @@ function Login(props) {
       <Card maxW='sm'>
         <CardBody>
           <Stack mt='6' spacing='3'>
-            <Heading size='md'>Argon Oracle Service</Heading>
+            <Heading size='md'>IC Internet Gateway</Heading>
             <Text>
-              The Argon Oracle Service is an open-source application built on the Internet Computer to create oracles.
+              Argon Studios' IC Internet Gateway helps you to easily integrate your Internet Computer dApp with Web2 apps, with no code.
             </Text>
           </Stack>
         </CardBody>

@@ -116,7 +116,7 @@ const CreateRequest = (props) => {
       </FormControl>
 
       <Button isLoading={isLoading} loadingText='Creating oracle' type="submit" colorScheme="blue" mt={4} onClick={onSendRequestClick}>
-        Create oracle
+        Create Gateway
       </Button>
     </Box>
       </Box>

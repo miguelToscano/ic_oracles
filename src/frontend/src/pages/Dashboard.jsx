@@ -29,7 +29,7 @@ function Dashboard(props) {
       <Flex justifyContent="space-between" alignItems="center" mb={4}>
         <Box>Logged in as {props.principalId}</Box>
         <Button colorScheme="blue" onClick={onCreateNewRequestClick}>
-          Create new request
+          Create new Gateway
         </Button>
       </Flex>
       <Table>

@@ -27,6 +27,7 @@ type Result_1 = variant { Ok : Request; Err : ApiError };
 type Result_2 = variant { Ok : vec Request; Err : ApiError };
 service : {
   create_request : (CreateRequestInput) -> (Result);
+  cycles : () -> (nat64) query;
   get_request : (text) -> (Result_1) query;
   get_requests : (text) -> (Result_2) query;
   make_request : (MakeRequestInput) -> (Result);
